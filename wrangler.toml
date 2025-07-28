@@ -1,0 +1,36 @@
+name = "your-app-name"
+account_id = "your-account-id"
+main = ".open-next/worker.js"
+compatibility_date = "2025-03-01"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+[assets]
+binding = "ASSETS"
+directory = ".open-next/assets"
+
+[[services]]
+binding = "WORKER_SELF_REFERENCE"
+service = "your-app-name"
+
+# D1 Database for user authentication and data
+[[d1_databases]]
+binding = "BROKER_DB"
+database_name = "your-app-db"
+database_id = "your-database-id"
+
+# KV namespace for sessions (optional, can use D1 instead)
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = "your-kv-namespace-id"
+
+# Optional: Hyperdrive for external PostgreSQL
+# [[hyperdrive]]
+# binding = "HYPERDRIVE"
+# id = "your-hyperdrive-id"
+
+# Environment-specific configuration
+[env.development]
+# Add development-specific settings here
+
+[env.production]
+# Add production-specific settings here

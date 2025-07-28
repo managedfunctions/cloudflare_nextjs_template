@@ -1,0 +1,3 @@
+# Copy this file to .dev.vars and update with your values
+RESEND_API_KEY=re_your_resend_api_key
+JWT_SECRET=your-secret-key-here
