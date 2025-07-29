@@ -1,66 +1,45 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { sendOtpAction, verifyOtpAction } from '@/app/actions/auth';
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [step, setStep] = useState<'email' | 'otp'>('email');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isPending, startTransition] = useTransition();
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
 
-    try {
-      const res = await fetch('/api/auth/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await res.json() as { error?: string; success?: boolean };
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to send code');
+    startTransition(async () => {
+      const result = await sendOtpAction(email);
+      
+      if (result.error) {
+        setError(result.error);
+      } else {
+        setStep('otp');
       }
-
-      setStep('otp');
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
 
-    try {
-      const res = await fetch('/api/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code: otp }),
-      });
-
-      const data = await res.json() as { error?: string; success?: boolean; user?: any };
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to verify code');
+    startTransition(async () => {
+      const result = await verifyOtpAction(email, otp);
+      
+      if (result.error) {
+        setError(result.error);
+      } else {
+        router.push('/dashboard');
       }
-
-      router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   return (
@@ -105,10 +84,10 @@ export default function LoginPage() {
             <div>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={isPending}
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Sending...' : 'Send Login Code'}
+                {isPending ? 'Sending...' : 'Send Login Code'}
               </button>
             </div>
           </form>
@@ -148,10 +127,10 @@ export default function LoginPage() {
             <div className="space-y-3">
               <button
                 type="submit"
-                disabled={loading}
+                disabled={isPending}
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Verifying...' : 'Verify & Sign In'}
+                {isPending ? 'Verifying...' : 'Verify & Sign In'}
               </button>
               
               <button

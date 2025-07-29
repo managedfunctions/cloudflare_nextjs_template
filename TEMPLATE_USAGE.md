@@ -12,6 +12,8 @@ This template provides a complete authentication system built on Next.js 15, Clo
 
 ### Technology Stack
 - **Frontend**: Next.js 15 with App Router, React 19, TypeScript
+- **Runtime**: Node.js runtime (not Edge runtime)
+- **Actions**: React 15 Server Actions for data mutations
 - **Styling**: Tailwind CSS v3
 - **Deployment**: Cloudflare Workers via OpenNext adapter
 - **Database**: Cloudflare D1 (SQLite) with Drizzle ORM
@@ -47,9 +49,10 @@ This template provides a complete authentication system built on Next.js 15, Clo
 - Consider adding email verification for new users
 
 ### 5. Dashboard Content
-- Replace placeholder content in `app/dashboard/page.tsx`
+- Replace placeholder content in `app/dashboard/page.tsx` and `app/dashboard/dashboard-client.tsx`
 - Add your application-specific features
 - Create additional protected pages as needed
+- Use server actions for data mutations
 
 ## Security Considerations
 
@@ -99,8 +102,9 @@ This template provides a complete authentication system built on Next.js 15, Clo
 ### API Integration
 ```typescript
 // Use Hyperdrive for external databases
-// Add API routes for your business logic
-// Implement proper error handling
+// Use server actions for data mutations instead of API routes
+// Implement proper error handling in server actions
+// For external APIs, call them from server actions
 ```
 
 ## Performance Tips
@@ -110,10 +114,11 @@ This template provides a complete authentication system built on Next.js 15, Clo
    - Implement pagination for large datasets
    - Consider caching strategies with KV
 
-2. **Edge Optimization**
+2. **Node Runtime Optimization**
    - Keep bundle sizes small
    - Use dynamic imports for large components
-   - Leverage Cloudflare's edge caching
+   - Leverage Cloudflare's caching capabilities
+   - Server actions reduce client-server roundtrips
 
 3. **Monitoring**
    - Set up error tracking (e.g., Sentry)
